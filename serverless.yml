@@ -1,0 +1,39 @@
+service: call-slack
+
+provider:
+  name: aws
+  runtime: python3.8
+  profile: serverless-framework
+  region: ap-northeast-1
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "ssm:Describe*"
+        - "ssm:Get*"
+        - "ssm:List*"
+      Resource:
+        - "*"
+
+functions:
+  hello:
+    handler: handler.hello
+    events:
+      - eventBridge:
+          schedule: ${file(./config.yml):schedule}
+
+plugins:
+  - serverless-python-requirements
+
+custom:
+  pythonRequirements:
+    dockerizePip: true
+
+resources:
+  Resources:
+    ssmParam:
+      Type: "AWS::SSM::Parameter"
+      Properties:
+        Name: Slack-WebHook
+        Type: String
+        Value: ${file(./config.yml):Slack-WebHook}
+

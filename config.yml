@@ -1,0 +1,2 @@
+schedule: cron(0 9 * * ? *)
+Slack-WebHook: Your-slack-incomming-webhook
